@@ -14,6 +14,4 @@
 # limitations under the License.
 #
 
-add_lunch_combo roamer2-userdebug
-add_lunch_combo roamer2-eng
 add_lunch_combo cm_roamer2-userdebug

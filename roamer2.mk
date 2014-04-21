@@ -7,7 +7,7 @@ $(call inherit-product-if-exists, vendor/zte/roamer2/roamer2-vendor.mk)
 
 DEVICE_PACKAGE_OVERLAYS += device/zte/roamer2/overlay
 
-PRODUCT_AAPT_CONFIG := normal mdpi
+PRODUCT_AAPT_CONFIG := normal mdpi hdpi xhdpi
 PRODUCT_AAPT_PREF_CONFIG := mdpi
 
 # Audio
@@ -16,9 +16,9 @@ PRODUCT_PACKAGES += \
     audio_policy.msm7x27a \
     audio.primary.msm7x27a
 
-# roamer2
-PRODUCT_PACKAGES += \
-    Roamer2Parts
+#Telephony Msim
+#PRODUCT_PACKAGES += \
+#    Telephony
 
 # Bluetooth
 PRODUCT_PACKAGES += \
@@ -45,11 +45,6 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     lights.roamer2
 
-# Live Wallpapers
-PRODUCT_PACKAGES += \
-    LiveWallpapersPicker \
-    librs_jni
-
 # Power HAL
 PRODUCT_PACKAGES += \
     power.msm7x27a
@@ -63,6 +58,10 @@ PRODUCT_PACKAGES += \
 # Ramdisk
 PRODUCT_COPY_FILES += \
     $(call find-copy-subdir-files,*,device/zte/roamer2/ramdisk,root)
+
+# Recovery
+PRODUCT_COPY_FILES += \
+    $(call find-copy-subdir-files,*,device/zte/roamer2/prebuilt/recovery,recovery/root)
 
 # Prebuilt
 PRODUCT_COPY_FILES += \
@@ -88,11 +87,12 @@ PRODUCT_COPY_FILES += \
 PRODUCT_PROPERTY_OVERRIDES += \
     ro.cwm.enable_key_repeat=true
 
+#Misc
+PRODUCT_PROPERTY_OVERRIDES += \
+    persist.sys.timezone=Europe/Moscow
+    
 $(call inherit-product, frameworks/native/build/phone-hdpi-512-dalvik-heap.mk)
-$(call inherit-product, build/target/product/full.mk)
+$(call inherit-product, build/target/product/full_base_telephony.mk)
+#$(call inherit-product-if-exists, packages/services/Telephony/Android.mk)
 
 PRODUCT_BUILD_PROP_OVERRIDES += BUILD_UTC_DATE=0
-PRODUCT_NAME := full_roamer2
-PRODUCT_DEVICE := roamer2
-PRODUCT_MANUFACTURER := ZTE
-PRODUCT_MODEL := V790(KIS III)

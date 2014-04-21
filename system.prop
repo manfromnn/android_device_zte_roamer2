@@ -39,13 +39,28 @@ ro.vendor.extension_library=/system/lib/libqc-opt.so
 ro.telephony.ril_class=QualcommSharedRIL
 rild.libpath=/system/lib/libril-qc-1.so
 rild.libargs=-d /dev/smd0
+persist.rild.nitz_plmn=
+persist.rild.nitz_long_ons_0=
+persist.rild.nitz_long_ons_1=
+persist.rild.nitz_long_ons_2=
+persist.rild.nitz_long_ons_3=
+persist.rild.nitz_short_ons_0=
+persist.rild.nitz_short_ons_1=
+persist.rild.nitz_short_ons_2=
+persist.rild.nitz_short_ons_3=
 ril.subscription.types=NV,RUIM
+DEVICE_PROVISIONED=1
 ro.telephony.call_ring.multiple=false
 ro.telephony.call_ring.delay=3000
+ro.telephony.ril.v3=qcomdsds
+persist.multisim.config=dsds
 
 # USB
 persist.sys.usb.config=mtp,adb
 persist.service.adb.enable=1
+
+# Webkit
+persist.webview.provider=classic
 
 # Wifi
 wifi.interface=wlan0
