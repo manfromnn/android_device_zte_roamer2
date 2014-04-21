@@ -1,3 +1,3 @@
 android_device_zte_v790
 =======================
-CyanogenMod for ZTE V790(KIS III)
+CyanogenMod 11 for ZTE V790(KIS III)
