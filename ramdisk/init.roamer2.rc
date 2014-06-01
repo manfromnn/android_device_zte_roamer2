@@ -4,21 +4,24 @@ on early-init
     mount debugfs debugfs /sys/kernel/debug
 
 on init
-    mkdir /mnt 0775 root system
-    mkdir /mnt/sdcard 0000 system system
-    mkdir /mnt/sdcard2 0000 system system
-    export EXTERNAL_STORAGE /mnt/sdcard2
+    mkdir /mnt/media_rw/sdcard0 0700 media_rw media_rw
+    mkdir /mnt/media_rw/usbdisk0 0700 media_rw media_rw
+    mkdir /storage/sdcard0 0700 root root
+    mkdir /storage/usbdisk0 0700 root root
+    export EXTERNAL_STORAGE /storage/sdcard0
     # for backwards compatibility
-    symlink /mnt/sdcard /sdcard
-    #symlink /storage/sdcard0 /sdcard
-    #symlink /storage/usbdisk0 /mnt/usbdisk
-    #symlink /storage/usbdisk0 /usbdisk
+    symlink /storage/sdcard0 /mnt/sdcard
+    symlink /storage/sdcard0 /sdcard
+    symlink /storage/usbdisk0 /mnt/usbdisk
+    symlink /storage/usbdisk0 /usbdisk
 
     # Set permissions for persist partition
     mkdir /persist 0771 system system
 
+
 on fs
 # mount mtd partitions
+
     # Mount /system rw first to give the filesystem a chance to save a checkpoint
     mount yaffs2 mtd@system /system
     mount yaffs2 mtd@system /system ro remount
@@ -27,10 +30,10 @@ on fs
     mount yaffs2 mtd@cache /cache nosuid nodev
     mount yaffs2 mtd@persist /persist nosuid nodev
 
+    mount_all /fstab.roamer2
     # zRAM
     swapon_all /fstab.roamer2
 
-on post-fs-data
     mkdir /data/misc/bluetooth 0770 bluetooth bluetooth
 
     # Create the directories used by the Wireless subsystem
@@ -73,10 +76,10 @@ on boot
     #ZTE_ALSPRX_001  end
 #   exec system/bin/btnvtool -O
  
+    chmod 0644 /proc/cmdline
     chown bluetooth bluetooth /sys/module/bluetooth_power/parameters/power
     chown bluetooth bluetooth /sys/class/rfkill/rfkill0/type
     chown bluetooth bluetooth /sys/class/rfkill/rfkill0/state
-    #chown bluetooth bluetooth /sys/class/rfkill/rfkill1/state
     chown bluetooth bluetooth /proc/bluetooth/sleep/proto
     chown bluetooth bluetooth /proc/bcm/sleep/proto
     chown system system /sys/module/sco/parameters/disable_esco
@@ -84,7 +87,6 @@ on boot
     chmod 0660 /sys/module/bluetooth_power/parameters/power
     chmod 0660 /sys/module/hci_smd/parameters/hcismd_set
     chmod 0660 /sys/class/rfkill/rfkill0/state
-    #chmod 0660 /sys/class/rfkill/rfkill1/state
     chmod 0660 /proc/bluetooth/sleep/proto
     chmod 0660 /proc/bcm/sleep/proto
     chown bluetooth bluetooth /dev/ttyHS0
@@ -99,28 +101,6 @@ on boot
     chmod 2770 /dev/socket/qmux_audio
     mkdir /dev/socket/qmux_bluetooth 0770 bluetooth bluetooth
     chmod 2770 /dev/socket/qmux_bluetooth
-
-    setprop wifi.interface wlan0
-
-    # permissions for NFC
-    setprop ro.nfc.port "I2C"
-    chmod 0777 /dev/pn544
-    chown nfc nfc /dev/pn544
-
-    #Set SUID bit for usbhub #ZTE_PJ_20120217 cts
-    chmod 0755 /system/bin/usbhub
-    chmod 755 /system/bin/usbhub_init
-
-    #Remove SUID bit for iproute2 ip tool
-    chmod 0755 /system/bin/ip
-
-    #port-bridge
-    chmod 0660 /dev/smd0
-    chown system system /dev/smd0
-
-    #BT DUN port-bridge
-    chmod 0660 /dev/smd7
-    chown bluetooth bluetooth /dev/smd7
 
     chmod 0444 /sys/devices/platform/msm_hsusb/gadget/usb_state
 
@@ -144,26 +124,17 @@ on boot
     write /proc/sys/net/ipv6/conf/rmnet_sdio5/accept_ra 2
     write /proc/sys/net/ipv6/conf/rmnet_sdio6/accept_ra 2
     write /proc/sys/net/ipv6/conf/rmnet_sdio7/accept_ra 2
-#ZTE_TIME_ZHENGCHAO 2012-03-01
-    exec /system/bin/sh -c "/system/bin/settime.sh"
-# import cne init file
-on post-fs
-    export_rc /persist/init.cne.rc
 
     # zRAM
     write /proc/sys/vm/page-cluster 0
 
-# msm specific files that need to be created on /data
-on post-fs-data
-
-    mkdir /data/misc/bluetooth 0770 bluetooth bluetooth
-
-    # Create the directories used by the Wireless subsystem
-    mkdir /data/misc/wifi 0770 wifi wifi
-    mkdir /data/misc/wifi/sockets 0770 wifi wifi
-    mkdir /data/misc/wifi/wpa_supplicant 0770 wifi wifi
-    mkdir /data/misc/dhcp 0770 dhcp dhcp
-    chown dhcp dhcp /data/misc/dhcp
+    # power-management
+    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor ondemand
+    write /sys/devices/system/cpu/cpufreq/ondemand/sampling_rate 50000
+    write /sys/devices/system/cpu/cpufreq/ondemand/up_threshold 90
+    write /sys/devices/system/cpu/cpufreq/ondemand/io_is_busy 1
+    write /sys/devices/system/cpu/cpufreq/ondemand/sampling_down_factor 4
+    write /sys/devices/system/cpu/cpufreq/ondemand/down_differential 10
 
     # Create directory used by audio subsystem
     mkdir /data/misc/audio 0770 audio audio
@@ -183,10 +154,6 @@ on post-fs-data
     chown system system /sys/devices/platform/msm_sdcc.3/polling
     chown system system /sys/devices/platform/msm_sdcc.4/polling
 
-    #Create the symlink to qcn wpa_supplicant folder for ar6000 wpa_supplicant
-    mkdir /data/system 0775 system system
-    symlink /data/misc/wifi/wpa_supplicant /data/system/wpa_supplicant
-
     #Create directories for wiper services
     mkdir /data/wpstiles/ 0755 shell
     mkdir /data/wiper 0775 location qcom_oncrpc
@@ -205,10 +172,6 @@ on post-fs-data
     mkdir /data/shared 0755
     chown system system /data/shared
 
-    #Create directory for FOTA
-    mkdir /data/fota 0771
-    chown system system /data/fota
-
     # Create /data/time folder for time-services
     mkdir /data/time/ 0700 system system
 
@@ -221,7 +184,7 @@ on post-fs-data
     chown system  system /sys/class/compass/akm8962/enable_ori
     chown system  system /sys/class/compass/akm8962/delay_acc
     chown system  system /sys/class/compass/akm8962/delay_mag
-    chown system  system /sys/class/compass/akm8962/delay_ori	
+    chown system  system /sys/class/compass/akm8962/delay_ori
     chown system  system /sys/class/compass/akm8962/accel
 #ZTE_AKMD_FYA 20111020 -------------
 
@@ -251,6 +214,13 @@ service ril-qmi /system/bin/sh /init.qcom.ril.path.sh
     user root
     oneshot
 
+service comp-set /system/bin/sh /system/etc/init.qcom.composition_type.sh
+    class late_start
+    user root
+    critical
+    disabled
+    oneshot
+
 service cnd /system/bin/cnd
     class late_start
     socket cnd stream 666 root radio
@@ -259,15 +229,12 @@ service cnd /system/bin/cnd
 on property:persist.cne.UseCne=vendor
     start cnd
 
-on property:persist.cne.UseCne=Vendor
-    start cnd
-
 service rmt_storage /system/bin/rmt_storage
     class core
     user root
     disabled
 
-on property:ro.emmc=1
+on property:ro.emmc=true
     start rmt_storage
 #ZTE_zhukaidi_TESTMODE_001 20111025 +++
 service bttestmode /system/bin/sh /system/bin/bt_testmode.sh
@@ -277,12 +244,6 @@ service bttestmode /system/bin/sh /system/bin/bt_testmode.sh
     disabled    
 #ZTE_hukaidi_TESTMODE_001 20111025 ---
 
-service hciattach /system/bin/sh /system/etc/init.qcom.bt.sh
-    class late_start
-    user bluetooth
-    group qcom_oncrpc bluetooth net_bt_admin
-    disabled
-    oneshot
 service hciattach-bcm /system/bin/brcm_patchram_plus --enable_hci --enable_4330 --baudrate 3000000 --patchram /etc/BCM4330B1_002.001.032.0518.0520.hcd --enable_lpm /dev/ttyHS0
     class late_start 
     user bluetooth
@@ -316,10 +277,6 @@ service bridgemgrd /system/bin/bridgemgrd
 #    group system inet
 #    disabled
 
-on property:ro.baseband="msm"
-    # Enable BT-DUN only for all msms
-    #setprop ro.qualcomm.bluetooth.dun true
-
 service qmiproxy /system/bin/qmiproxy
     class late_start
     user radio
@@ -330,47 +287,29 @@ service qmiproxy /system/bin/qmiproxy
 service qmuxd /system/bin/qmuxd
     class core
     user radio
-    group radio audio bluetooth
-    disabled
+    group radio audio bluetooth gps qcom_diag
 
 service netmgrd /system/bin/netmgrd
     class late_start
-    disabled
 
-service sensors /system/bin/sensors.qcom
-    class late_start
-    user root
-    group root
-    disabled
-
-on property:ro.use_data_netmgrd=false
-    # netmgr not supported on specific target
-    stop netmgrd
-
-# Adjust socket buffer to enlarge TCP receive window for high bandwidth
-# but only if ro.data.large_tcp_window_size property is set.
-on property:ro.data.large_tcp_window_size=true
-    write /proc/sys/net/ipv4/tcp_adv_win_scale  1
-
-service btwlancoex /system/bin/sh /system/etc/init.qcom.coex.sh
-    class late_start
-    user bluetooth
-    group bluetooth net_bt_admin inet net_admin net_raw
+service wpa_supplicant /system/bin/wpa_supplicant \
+    -iwlan0 -Dnl80211 -c/data/misc/wifi/wpa_supplicant.conf \
+    -I/system/etc/wifi/wpa_supplicant_overlay.conf \
+    -O/data/misc/wifi/sockets \
+    -e/data/misc/wifi/entropy.bin -g@android:wpa_wlan0
+    class main
+    socket wpa_wlan0 dgram 660 wifi wifi
     disabled
     oneshot
 
+service hostapd /system/bin/hostapd -dddd /data/misc/wifi/hostapd.conf
+    class late_start
+    socket hostapd_wlan0 dgram 660 root wifi
+    user root
+    group wifi
+    oneshot
+    disabled
 
-service wpa_supplicant /system/bin/wpa_supplicant -Dnl80211 -iwlan0
-	#   we will start as root and wpa_supplicant will switch to user wifi
-	#   after setting up the capabilities required for WEXT
-	#   user wifi
-	#   group wifi inet keystore
-	class main
-	#socket wpa_wlan0 dgram 660 wifi wifi
-	class late_start 
-	disabled
-	oneshot	
-	
 service abtfilt /system/bin/abtfilt -a -d -z -n -q -v -s -w wlan0
     class late_start
     user root
@@ -378,45 +317,21 @@ service abtfilt /system/bin/abtfilt -a -d -z -n -q -v -s -w wlan0
     disabled
     oneshot
 
-#For AR6005 RF test
-service tcmd_app /system/bin/tcmd_app -a -p /system/wifi/ath6kl_sdio.ko
-   class late_start 
-   disabled
-   oneshot
-   
-service tcmd_shell /system/bin/tcmd_shell
-   class late_start 
-   disabled
-   oneshot
-	
-service dhcpcd_bnep0 /system/bin/dhcpcd -BKLG
-    class late_start 
+service dhcpcd_wlan0 /system/bin/dhcpcd -aABDKL
+    class main
     disabled
     oneshot
 
-service wiperiface /system/bin/wiperiface
-    class late_start 
-    user location
-    group qcom_oncrpc
+service iprenew_wlan0 /system/bin/dhcpcd -n
+    class main
+    disabled
     oneshot
 
-service gpsone_daemon /system/bin/gpsone_daemon
-    class late_start
-    user system
-    group system qcom_oncrpc inet
+service dhcpcd_bt-pan /system/bin/dhcpcd -BKLG
+    class main
     disabled
+    oneshot
 
-service quipc_igsn /system/bin/quipc_igsn
-    class late_start
-    user gps
-    group inet gps
-    disabled
-
-service quipc_main /system/bin/quipc_main
-    class late_start
-    user gps
-    group net_admin wifi inet gps
-    disabled
 
 service fm_dl /system/bin/sh /system/etc/init.qcom.fm.sh
     class late_start
@@ -450,11 +365,6 @@ service qcom-sh /system/bin/sh /init.qcom.sh
     user root
     oneshot
 
-service qcom-post-boot /system/bin/sh /system/etc/init.qcom.post_boot.sh
-    class late_start
-    user root
-    disabled
-    oneshot
 
 service qcom-wifi /system/bin/sh /system/etc/init.qcom.wifi.sh
     class late_start
@@ -468,17 +378,6 @@ service atfwd /system/bin/ATFWD-daemon
     user system
     group system radio
     onrestart /system/bin/log -t RIL-ATFWD -p w "ATFWD daemon restarted"
-
-service hdmid /system/bin/hdmid
-    class late_start
-    socket hdmid stream 0660 root system graphics
-    disabled
-
-service ppd /system/bin/mm-pp-daemon
-    class late_start
-    user system
-    socket pps stream 0660 system system graphics
-    group system graphics
 
 service ds_fmc_appd /system/bin/ds_fmc_appd -p "rmnet0" -D
     class late_start
@@ -518,7 +417,8 @@ service ril-daemon1 /system/bin/rild -c 1
     socket rild-debug1 stream 660 radio system
     user root
     disabled
-    group radio cache inet misc audio sdcard_rw qcom_oncrpc diag
+    group radio cache inet misc audio sdcard qcom_oncrpc diag
+    start ril-daemon1
 
 service profiler_daemon /system/bin/profiler_daemon
     class late_start
@@ -526,12 +426,27 @@ service profiler_daemon /system/bin/profiler_daemon
     group root
     disabled
 
-service sdcard /system/bin/sdcard /data/media 1023 1023
+#service sdcard /system/bin/sdcard /data/media 1023 1023
+#    class late_start
+#    disabled
+
+#on property:persist.fuse_sdcard=true
+#    start sdcard
+
+# This will make sure that sdcard service starts as late_start.
+#on nonencrypted
+#    setprop ro.fuse_sdcard ${persist.fuse_sdcard}
+
+#on property:vold.decrypt=trigger_restart_framework
+#    setprop ro.fuse_sdcard ${persist.fuse_sdcard}
+
+service fuse_sdcard /system/bin/sdcard -u 1023 -g 1023 -d /mnt/media_rw/sdcard /sdcard
     class late_start
     disabled
 
-on property:persist.fuse_sdcard=true
-    start sdcard
+service fuse_sdcard2 /system/bin/sdcard -u 1023 -g 1023 -d /mnt/media_rw/usbdisk0 /Device
+    class late_start
+    disabled
 
 service hcidump /system/bin/sh /system/etc/hcidump.sh
     user bluetooth
@@ -540,13 +455,13 @@ service hcidump /system/bin/sh /system/etc/hcidump.sh
     oneshot
 
 #ZTE_WANGZY_PROXIMITY_101014
-service proximity_init /system/bin/proximity.init -r
-    class late_start 
-    disabled
-    oneshot
+#service proximity_init /system/bin/proximity.init -r
+#    class late_start 
+#    disabled
+#    oneshot
     
-on property:dev.bootcomplete=1
-    start proximity_init
+#on property:dev.bootcomplete=1
+#    start proximity_init
 #ZTE_WANGZY_PROXIMITY_101014 
 
 service akmd /system/bin/akmd8962_new -m 5 
@@ -567,3 +482,4 @@ on property:service.brcm.bt.soft_onoff=1
 # stop btld if soft_onoff is disabled
 on property:service.brcm.bt.soft_onoff=0
     stop btld
+

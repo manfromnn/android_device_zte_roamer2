@@ -9,7 +9,7 @@ userdata                                    /data              yaffs2  nosuid,no
 misc                                        /misc              mtd     defaults                                recoveryonly
 boot                                        /boot              mtd     defaults                                defaults
 recovery                                    /recovery          mtd     defaults                                defaults
-/dev/block/mmcblk0p1                        /sdcard            auto    defaults                                defaults
-/dev/block/mmcblk0                         /sdcard2            auto    defaults                                defaults
-/devices/platform/msm_sdcc.1/mmc_host      /mnt/sdcard         auto    defaults                                voldmanaged=sdcard:auto
+/devices/platform/msm_sdcc.1/mmc_host        auto               auto    defaults                                voldmanaged=sdcard:auto,noemulatedsd
+/devices/platform/msm_hsusb_host.0/usb1      auto               auto    defaults                                voldmanaged=sdcard2:auto
+/dev/block/zram0                             none               swap    defaults                                zramsize=67108864
 

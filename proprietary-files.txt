@@ -12,6 +12,8 @@ lib/libsc-a2xx.so
 
 # Bluetooth
 bin/hci_qcomm_init
+bin/brcm_patchram_plus
+etc/BCM4330B1_002.001.032.0518.0520.hcd
 
 # Camera
 lib/libchromatix_mt9e013_preview.so
@@ -26,7 +28,7 @@ lib/libgemini.so
 lib/libmmipl.so
 lib/libmmjpeg.so
 lib/liboemcamera.so
-lib/hw/camera.msm7x27a.so
+lib/hw/camera.msm7627a.so
 
 # FM Radio
 bin/fmconfig
@@ -64,9 +66,18 @@ lib/libOmxWmaDec.so
 lib/libOmxWmvDec.so
 
 # RIL & misc
+bin/bridgemgrd
+bin/port-bridge
+bin/qmiproxy
+bin/sapd
 bin/netmgrd
+#bin/ATFWD-daemon
 bin/qmuxd
-bin/rild
+bin/radish
+etc/permissions/qcnvitems.xml
+etc/permissions/qcrilhook.xml
+framework/qcnvitems.jar
+framework/qcrilhook.jar
 bin/rmt_storage
 lib/libauth.so
 lib/libaudioeq.so
@@ -91,6 +102,7 @@ lib/libqmiservices.so
 lib/libqmi.so
 lib/libqueue.so
 lib/libril-qc-1.so
+lib/libril-qc-qmi-1.so
 lib/libril-qcril-hook-oem.so
 lib/libril.so
 lib/libSimCardAuth.so

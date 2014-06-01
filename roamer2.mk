@@ -17,12 +17,16 @@ PRODUCT_PACKAGES += \
     audio.primary.msm7x27a
 
 #Telephony Msim
-#PRODUCT_PACKAGES += \
+PRODUCT_PACKAGES += \
+    ATFWD-daemon
 #    Telephony
 
 # Bluetooth
 PRODUCT_PACKAGES += \
     btmac
+
+PRODUCT_PACKAGES += \
+    libnetcmdiface
 
 # FM Radio
 PRODUCT_PACKAGES += \
@@ -86,6 +90,9 @@ PRODUCT_COPY_FILES += \
 # Enable repeatable keys in CWM
 PRODUCT_PROPERTY_OVERRIDES += \
     ro.cwm.enable_key_repeat=true
+#Enable DualSIM
+PRODUCT_PROPERTY_OVERRIDES += \
+    persist.dsds.enabled=true
 
 #Misc
 PRODUCT_PROPERTY_OVERRIDES += \

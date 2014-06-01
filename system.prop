@@ -36,7 +36,6 @@ com.qc.hardware=true
 ro.vendor.extension_library=/system/lib/libqc-opt.so
 
 # Telephony
-ro.telephony.ril_class=QualcommSharedRIL
 rild.libpath=/system/lib/libril-qc-1.so
 rild.libargs=-d /dev/smd0
 persist.rild.nitz_plmn=
@@ -50,10 +49,20 @@ persist.rild.nitz_short_ons_2=
 persist.rild.nitz_short_ons_3=
 ril.subscription.types=NV,RUIM
 DEVICE_PROVISIONED=1
-ro.telephony.call_ring.multiple=false
+ro.telephony.call_ring.multiple=true
 ro.telephony.call_ring.delay=3000
-ro.telephony.ril.v3=qcomdsds
-persist.multisim.config=dsds
+#ro.telephony.ril.v3=qcomdsds
+persist.radio.multisim.config=dsds
+persist.radio.dont_use_dsd=true
+persist.radio.plmn_name_cmp=1
+ro.use_data_netmgrd=true
+#ro.ril.transmitpower=true
+ro.telephony.sends_barcount=1
+ro.config.dsds_mode=umts_gsm
+#ro.telephony.default_network=1
+#telephony.lteOnGsmDevice=0
+ro.ril.gprsclass=10
+gsm.current.phone-type=1
 
 # USB
 persist.sys.usb.config=mtp,adb

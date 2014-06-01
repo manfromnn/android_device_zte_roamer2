@@ -15,7 +15,7 @@ PRODUCT_BRAND := ZTE
 PRODUCT_MODEL := V790(KIS III)
 PRODUCT_MANUFACTURER := ZTE
 PRODUCT_RELEASE_NAME := V790(KIS III)
-PRODUCT_LOCALES := en_GB es_ES fr_FR ru_RU de_DE ms et
+#PRODUCT_LOCALES := en_US en_GB es_ES fr_FR ru_RU de_DE ms et
 
 
 # Set build fingerprint / ID / Product Name ect.
