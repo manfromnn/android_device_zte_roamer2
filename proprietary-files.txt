@@ -71,7 +71,7 @@ bin/port-bridge
 bin/qmiproxy
 bin/sapd
 bin/netmgrd
-#bin/ATFWD-daemon
+bin/ATFWD-daemon
 bin/qmuxd
 bin/radish
 etc/permissions/qcnvitems.xml
