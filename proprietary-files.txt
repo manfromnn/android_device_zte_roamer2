@@ -74,6 +74,7 @@ bin/netmgrd
 bin/ATFWD-daemon
 bin/qmuxd
 bin/radish
+bin/rild
 etc/permissions/qcnvitems.xml
 etc/permissions/qcrilhook.xml
 framework/qcnvitems.jar
