@@ -27,9 +27,8 @@ ro.fm.transmitter=false
 ro.fm.mulinst.recording.support=false
 
 # Memory
-ro.zram.default=0
-persist.sys.purgeable_assets=1
-sys.mem.max_hidden_apps=10
+ro.ksm.default=1
+ro.config.low_ram=true
 
 # Qualcomm
 com.qc.hardware=true
@@ -38,6 +37,7 @@ ro.vendor.extension_library=/system/lib/libqc-opt.so
 # Telephony
 rild.libpath=/system/lib/libril-qc-1.so
 rild.libargs=-d /dev/smd0
+ro.telephony.ril_class=ZTERIL
 persist.rild.nitz_plmn=
 persist.rild.nitz_long_ons_0=
 persist.rild.nitz_long_ons_1=
@@ -49,18 +49,14 @@ persist.rild.nitz_short_ons_2=
 persist.rild.nitz_short_ons_3=
 ril.subscription.types=NV,RUIM
 DEVICE_PROVISIONED=1
-ro.telephony.call_ring.multiple=true
+ro.telephony.call_ring.multiple=false
 ro.telephony.call_ring.delay=3000
-#ro.telephony.ril.v3=qcomdsds
 persist.radio.multisim.config=dsds
 persist.radio.dont_use_dsd=true
 persist.radio.plmn_name_cmp=1
 ro.use_data_netmgrd=true
-#ro.ril.transmitpower=true
 ro.telephony.sends_barcount=1
 ro.config.dsds_mode=umts_gsm
-#ro.telephony.default_network=1
-#telephony.lteOnGsmDevice=0
 ro.ril.gprsclass=10
 gsm.current.phone-type=1
 
@@ -74,4 +70,3 @@ persist.webview.provider=classic
 # Wifi
 wifi.interface=wlan0
 wifi.supplicant_scan_interval=60
-wifi.chip.type=AR_6005

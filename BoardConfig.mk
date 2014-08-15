@@ -27,12 +27,11 @@ TARGET_CPU_ABI := armeabi-v7a
 TARGET_CPU_ABI2 := armeabi
 TARGET_CPU_VARIANT := cortex-a5
 TARGET_ARCH_VARIANT := armv7-a-neon
-PROPERTY_MULTI_SIM_CONFIG := DSDS
 
 ARCH_ARM_HAVE_TLS_REGISTER := true
 
-TARGET_GLOBAL_CFLAGS += -mtune=cortex-a5 -mfpu=neon -mfloat-abi=softfp
-TARGET_GLOBAL_CPPFLAGS += -mtune=cortex-a5 -mfpu=neon -mfloat-abi=softfp
+TARGET_GLOBAL_CFLAGS += -mtune=cortex-a5 -mfpu=neon-vfpv4 -mfloat-abi=softfp
+TARGET_GLOBAL_CPPFLAGS += -mtune=cortex-a5 -mfpu=neon-vfpv4 -mfloat-abi=softfp
 
 # Kernel
 TARGET_KERNEL_SOURCE := kernel
@@ -50,7 +49,6 @@ TARGET_SPECIFIC_HEADER_PATH := device/zte/roamer2/include
 
 # Build
 TARGET_SYSTEMIMAGE_USE_SQUISHER := true
-SKIP_SET_METADATA := true
 
 # Graphics
 BOARD_EGL_CFG := device/zte/roamer2/prebuilt/system/lib/egl/egl.cfg
@@ -87,9 +85,12 @@ WIFI_DRIVER_FW_PATH_STA := "sta"
 WIFI_DRIVER_FW_PATH_AP  := "ap"
 WIFI_DRIVER_FW_PATH_P2P := "p2p"
 
+#RIL
+BOARD_RIL_CLASS := ../../../device/zte/roamer2/ril/
+
 # Audio
 TARGET_PROVIDES_LIBAUDIO := true
-TARGET_QCOM_AUDIO_VARIANT := legacy
+TARGET_QCOM_AUDIO_VARIANT := caf
 BOARD_USES_LEGACY_ALSA_AUDIO := true
 
 # Bluetooth
@@ -123,7 +124,7 @@ TARGET_RECOVERY_FSTAB := device/zte/roamer2/ramdisk/fstab.roamer2
 BOARD_HAS_NO_SELECT_BUTTON := true
 BOARD_UMS_LUNFILE := "sys/class/android_usb/f_mass_storage/lun/file"
 TARGET_USERIMAGES_USE_EXT4 := true
-COMMON_GLOBAL_CFLAGS += -DRECOVERY_CANT_USE_CONFIG_EXT4_FS_XATTR
+# COMMON_GLOBAL_CFLAGS += -DRECOVERY_CANT_USE_CONFIG_EXT4_FS_XATTR
 
 # Partition sizes
 BOARD_BOOTIMAGE_PARTITION_SIZE := 0x00a00000

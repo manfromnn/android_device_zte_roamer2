@@ -7,8 +7,6 @@ $(call inherit-product-if-exists, vendor/zte/roamer2/roamer2-vendor.mk)
 
 DEVICE_PACKAGE_OVERLAYS += device/zte/roamer2/overlay
 
-PRODUCT_AAPT_CONFIG := normal mdpi hdpi xhdpi
-PRODUCT_AAPT_PREF_CONFIG := mdpi
 
 # Audio
 PRODUCT_PACKAGES += \
@@ -59,6 +57,10 @@ PRODUCT_PACKAGES += \
     libOmxCore \
     libstagefrighthw
 
+# Webkit
+PRODUCT_PACKAGES += \
+    libwebcore
+
 # Ramdisk
 PRODUCT_COPY_FILES += \
     $(call find-copy-subdir-files,*,device/zte/roamer2/ramdisk,root)
@@ -96,10 +98,14 @@ PRODUCT_PROPERTY_OVERRIDES += \
 
 #Misc
 PRODUCT_PROPERTY_OVERRIDES += \
-    persist.sys.timezone=Europe/Moscow
+    persist.sys.timezone=Europe/Moscow \
+    ro.product.locale.language=ru \
+    ro.product.locale.region=RU
     
 $(call inherit-product, frameworks/native/build/phone-hdpi-512-dalvik-heap.mk)
 $(call inherit-product, build/target/product/full_base_telephony.mk)
-#$(call inherit-product-if-exists, packages/services/Telephony/Android.mk)
+
+PRODUCT_AAPT_CONFIG := normal mdpi
+PRODUCT_AAPT_PREF_CONFIG := mdpi
 
 PRODUCT_BUILD_PROP_OVERRIDES += BUILD_UTC_DATE=0
