@@ -68,7 +68,6 @@ static int bt_vendor_qcom_op(bt_vendor_opcode_t opcode, void *param)
 	 * opened, so we have to download it at power up.
 	 * Report dummy success here. */
 	case BT_VND_OP_FW_CFG:
-		sleep(1); /* There seems to be a race condition. */
 		bt_vendor_callbacks->fwcfg_cb(BT_VND_OP_RESULT_SUCCESS);
 		break;
 	case BT_VND_OP_SCO_CFG:
@@ -88,15 +87,13 @@ static int bt_vendor_qcom_op(bt_vendor_opcode_t opcode, void *param)
 	case BT_VND_OP_USERIAL_CLOSE:
 		bt_hardware_serial(false);
 		break;
-	case BT_VND_OP_GET_LPM_IDLE_TIMEOUT:
-		break;
 	case BT_VND_OP_LPM_SET_MODE:
 		bt_vendor_callbacks->lpm_cb(BT_VND_OP_RESULT_SUCCESS);
 		break;
-	case BT_VND_OP_LPM_WAKE_SET_STATE:
-		break;
 	case BT_VND_OP_EPILOG:
 		bt_vendor_callbacks->epilog_cb(BT_VND_OP_RESULT_SUCCESS);
+		break;
+	default:
 		break;
 	}
 

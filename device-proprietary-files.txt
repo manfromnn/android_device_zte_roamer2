@@ -28,7 +28,7 @@ lib/libgemini.so
 lib/libmmipl.so
 lib/libmmjpeg.so
 lib/liboemcamera.so
-lib/hw/camera.msm7627a.so
+lib/hw/camera.msm7x27a.so
 
 # FM Radio
 bin/fmconfig
@@ -113,6 +113,8 @@ lib/libwmsts.so
 # Sensors
 bin/akmd8962_new
 bin/proximity.init
+bin/prox_cal
+etc/init.d/09proxcal
 lib/hw/sensors.default.so
 
 # Wifi

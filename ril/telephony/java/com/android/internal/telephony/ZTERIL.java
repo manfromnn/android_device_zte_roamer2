@@ -39,6 +39,11 @@ public class ZTERIL extends RIL implements CommandsInterface {
     static final int RIL_REQUEST_SET_UICC_SUBSCRIPTION = 112;
     static final int RIL_UNSOL_RESPONSE_IMS_NETWORK_STATE_CHANGED = 1036;
     static final int RIL_UNSOL_TETHERED_MODE_STATE_CHANGED = 1037;
+    static final int RIL_REQUEST_GSM_BROADCAST_ACTIVATION = 91;
+    static final int RIL_REQUEST_OPERATOR = 22;
+    static final int RIL_REQUEST_QUERY_NETWORK_SELECTION_MODE = 45;
+    static final int RIL_REQUEST_SET_NETWORK_SELECTION_AUTOMATIC = 46;
+    static final int RIL_REQUEST_VOICE_REGISTRATION_STATE = 20;
 
     public ZTERIL(Context paramContext, int paramInt1,
            int paramInt2, Integer paramInteger) {
@@ -83,7 +88,3 @@ public class ZTERIL extends RIL implements CommandsInterface {
     send(localRILRequest);
   }
 }
-
-
-
-

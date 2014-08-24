@@ -56,11 +56,6 @@ on early-boot
 
 on boot
 
-    #ZTE_ALSPRX_001  start  
-    mkdir /data/misc/prox 0777 radio radio   
-    chmod 0777  /dev/taos    
-    #ZTE_ALSPRX_001  end
-
     exec system/bin/btnvtool -O
     chown bluetooth bluetooth /sys/module/bluetooth_power/parameters/power
     chown bluetooth bluetooth /sys/class/rfkill/rfkill0/type
@@ -217,12 +212,17 @@ on post-fs-data
     chown system system /sys/devices/platform/msm_sdcc.3/polling
     chown system system /sys/devices/platform/msm_sdcc.4/polling
 
-    #Create the symlink to qcn wpa_supplicant folder for ar6000 wpa_supplicant
-    #mkdir /data/system 0775 system system
-    #symlink /data/misc/wifi/wpa_supplicant /data/system/wpa_supplicant
-    #gaohw add for wpa_supplicant.conf
-    #chmod 0660 /data/misc/wifi/wpa_supplicant.conf
-    #chown system wifi /data/misc/wifi/wpa_supplicant.conf
+    #ZTE_ALSPRX_001  start  
+    mkdir /data/misc/prox 0777 radio radio   
+    chmod 0777  /dev/taos    
+    #ZTE_ALSPRX_001  end
+
+    mkdir -p /data/system/sensors
+    touch /data/system/sensors/settings
+    chmod 665 /data/system/sensors
+
+    mkdir -p /data/misc/sensors
+    chmod 775 /data/misc/sensors
 
     #Create directories for wiper services
     mkdir /data/wpstiles/ 0755 shell
@@ -270,16 +270,6 @@ on post-fs-data
     chown system system /sys/class/android_usb/android0/f_rndis/ethaddr
     chmod 0660 /sys/class/android_usb/android0/f_rndis/ethaddr
 
-# Export GPIO56 for fusion targets to enable/disable hub
-service usbhub_init /system/bin/usbhub_init
-   class main
-   user root
-   disabled
-   oneshot
-
-on property:ro.board.platform=msm7630_fusion
-    start usbhub_init
-
 on property:init.svc.wpa_supplicant=stopped
     stop dhcpcd
 
@@ -292,11 +282,6 @@ on property:bluetooth.isEnabled=true
 #on property:bluetooth.isEnabled=false
 #    start amp_unload
 
-service qcom-c_core-sh /system/bin/sh /init.qcom.class_core.sh
-    class core
-    user root
-    oneshot
-
 service qcom-c_main-sh /system/bin/sh /init.qcom.class_main.sh
     class main
     user root
@@ -305,76 +290,7 @@ service qcom-c_main-sh /system/bin/sh /init.qcom.class_main.sh
 on property:vold.decrypt=trigger_restart_framework
     start qcom-c_main-sh
 
-service cnd /system/bin/cnd
-    class late_start
-    socket cnd stream 660 root inet
-
-
-#tianyu liyeguang on 2011040112 add for ty_dmesg service setting begin
-service ty_dmesg  /system/bin/ty_dmesg -s 32768 
-    user root
-    group root
-    disabled
-
-service ty_logcat_radio  /system/bin/logcat -b radio  -v time -f /data/local/logcat_radio.log
-    user root
-    group root
-    disabled
- 
-service ty_logcat  /system/bin/logcat   -v time -f /data/local/logcat.log
-    user root
-    group root
-    disabled
-
-service ty_top  /system/bin/top    -d 10   -f /data/local/ty_top.log
-    user root
-    group root
-    disabled
-    
-on property:persist.sys.ty_dmesg=1
-    start ty_dmesg
-    start ty_logcat_radio
-    start ty_logcat
-
-service ty_dellog  /system/bin/rm   /data/local/logcat_radio.log  /data/local/logcat.log  /data/local/tydmesg_ping.log  /data/local/log/android_reboot.log 
-    user root
-    group root
-    disabled
-    oneshot
-    
-on property:persist.sys.ty_rmlog=1
-    start  ty_dellog
-    setprop persist.sys.ty_rmlog 0
-
-service ty_del_dashbin  /system/bin/rm   -r /data/lost+found/ 
-    user root
-    group root
-    oneshot
-    
-on property:persist.sys.ty_del_dashbin=1
-    start  ty_del_dashbin
-    setprop persist.sys.ty_del_dashbin 0
-    
-#tianyu liyeguang on 2011040112 add for ty_dmesg service setting end
-
-
-#tianyu liyeguang 20111129 add : user can switch usb_device   begin
-#tyswitchusb will read persist.ty.usb.product and put it to the devicefile
-#service ty_switchusb  /system/bin/ty_switchusb 
-#    user root
-#    group root
-#    oneshot
-    
-#tianyu liyeguang 20111129 add : user can switch usb_device   end
-
-#tianyu liyeguang 20120913 add : copy pcdrivers from /persist to emmc_card begin
-service ty_pcdriver  /system/bin/pcdriver  
-    class main
-    user root
-    group root
-    oneshot
-#tianyu liyeguang 20120913 add : copy pcdrivers from /persist to emmc_card end
-
+   
 service rmt_storage /system/bin/rmt_storage
     class core
     user root
@@ -382,26 +298,6 @@ service rmt_storage /system/bin/rmt_storage
 
 on property:ro.emmc=1
     start rmt_storage
-
-## 592zn Symbean modify  begin 20130529
-#####  remove it!!!    592zn Symbean  20130529
-#TYDRV jinxr merge from android 2.2 for BT 20110-9-19 start
-#service hciattach_brcm /system/bin/brcm_patchram_plus \
-#--enable_hci --enable_lpm --baudrate 3000000 --patchram /system/etc/firmware/brcm_bt.hcd  /dev/ttyHS0
-#    class main
-#    user bluetooth
-#    group qcom_oncrpc bluetooth net_bt_admin system
-#    disabled
-#    oneshot
-#
-#service hciattach /system/bin/sh /system/etc/init.qcom.bt.sh
-#    class main
-#    user bluetooth
-#    group qcom_oncrpc bluetooth net_bt_admin
-#    disabled
-#    oneshot
-## 592zn Symbean modify  end
-
 
 ## 592zn Symbean modify  begin 20130529
 service hciattach /system/bin/sh /system/etc/init.bcm.bt.sh
@@ -455,26 +351,7 @@ on property:persist.sys.ty.portbridge.run=start
 
 on property:persist.sys.ty.portbridge.run=stop
     stop port-bridge-at
-
-service StartAutorunISO /system/bin/AutoRunIso 1 
-    user root
-    group root
-    disabled
-    oneshot
-
-service StopAutorunISO /system/bin/AutoRunIso 0
-    user root
-    group root   
-    disabled
-    oneshot
-   
-on property:persist.sys.ty.isodriver.run=start
-    start StartAutorunISO
-
-on property:persist.sys.ty.isodriver.run=stop
-    start StopAutorunISO
-#shenlei add for pc_modem shenlei end
-
+ 
 service qmiproxy /system/bin/qmiproxy
     class main
     user radio
@@ -492,12 +369,6 @@ service netmgrd /system/bin/netmgrd
     class main
     disabled
 
-service sensors /system/bin/sensors.qcom
-    class main
-    user root
-    group root
-    disabled
-
 on property:ro.use_data_netmgrd=false
     # netmgr not supported on specific target
     stop netmgrd
@@ -511,24 +382,6 @@ service btwlancoex /system/bin/sh /system/etc/init.qcom.coex.sh
     class late_start
     user bluetooth
     group bluetooth net_bt_admin inet net_admin net_raw
-    disabled
-    oneshot
-
-service amp_init /system/bin/amploader -i
-    class late_start
-    user root
-    disabled
-    oneshot
-
-service amp_load /system/bin/amploader -l 7000
-    class main
-    user root
-    disabled
-    oneshot
-
-service amp_unload /system/bin/amploader -u
-    class main
-    user root
     disabled
     oneshot
 
@@ -594,38 +447,6 @@ service iprenew_p2p /system/bin/dhcpcd -n p2p
 
 ## 592zn Symbean modify  end
 
-#hujun add for  buletooth wifi coexist 20121030
-service abtfilt /system/bin/abtfilt -d -z -n -q -v -s -w wlan0
-    class main
-    user root
-    group bluetooth net_bt_admin inet net_admin net_raw
-    disabled
-    oneshot
-
-service wiperiface /system/bin/wiperiface
-    class main
-    user gps
-    group gps qcom_oncrpc net_raw
-    oneshot
-
-service gpsone_daemon /system/bin/gpsone_daemon
-    class main
-    user gps
-    group gps qcom_oncrpc inet net_raw
-    disabled
-
-service quipc_igsn /system/bin/quipc_igsn
-    class main
-    user gps
-    group inet gps
-    disabled
-
-service quipc_main /system/bin/quipc_main
-    class main
-    user gps
-    group gps net_admin wifi inet
-    disabled
-
 service fm_dl /system/bin/sh /system/etc/init.qcom.fm.sh
     class main
     user root
@@ -653,10 +474,6 @@ on property:drmdiag.load=1
 on property:drmdiag.load=0
     stop drmdiag
 
-service qcom-sh /system/bin/sh /init.qcom.sh
-    class main
-    user root
-    oneshot
 
 service qcom-post-boot /system/bin/sh /system/etc/init.qcom.post_boot.sh
     class main
@@ -688,50 +505,9 @@ service hdmid /system/bin/hdmid
     socket hdmid stream 0660 root system graphics
     disabled
 
-#TYRD wuxh remove cabl on 20120618
-# service ppd /system/bin/mm-pp-daemon  
-  #  class late_start
-   # user system
-    #socket pps stream 0660 system system graphics
-    #group system graphics
-
-
-service ds_fmc_appd /system/bin/ds_fmc_appd -p "rmnet0" -D
-    class main
-    group radio wifi inet
-    disabled
-    oneshot
-
-on property:persist.data.ds_fmc_app.mode=1
-    start ds_fmc_appd
-
-service ims_regmanager /system/bin/exe-ims-regmanagerprocessnative
-    class main
-    user system
-    group qcom_oncrpc net_bt_admin inet radio wifi
-    disabled
-
-on property:persist.ims.regmanager.mode=1
-    start ims_regmanager
-
 on property:ro.data.large_tcp_window_size=true
     # Adjust socket buffer to enlarge TCP receive window for high bandwidth (e.g. DO-RevB)
     write /proc/sys/net/ipv4/tcp_adv_win_scale  1
-
-service time_daemon /system/bin/time_daemon
-    class main
-    user root
-    group root
-    oneshot
-    disabled
-
-on property:persist.timed.enable=true
-    start time_daemon
-
-service battery_monitor /system/bin/battery_monitor
-    user system
-    group system
-    disabled
 
 service ril-daemon1 /system/bin/rild -c 1
     class late_start
@@ -740,17 +516,6 @@ service ril-daemon1 /system/bin/rild -c 1
     user root
     disabled
     group radio cache inet misc audio sdcard_r sdcard_rw diag qcom_oncrpc qcom_diag log
-
-service profiler_daemon /system/bin/profiler_daemon
-    class main
-    user root
-    group root
-    disabled
-
-service ztebasebandinit /system/bin/sh /system/etc/init.zte.baseband.sh
-    class late_start
-    user root
-    oneshot
 
 service fuse_sdcard0 /system/bin/sdcard -u 1023 -g 1023 -d /mnt/media_rw/sdcard0 /storage/sdcard0
     class late_start
@@ -797,10 +562,6 @@ on property:persist.sys.ssr.restart_level=3
 #niuli add for sensor file thone begin
 
 on boot
-    chown system system /dev/akm8975_aot
-    chown system system /dev/akm8975_dev
-    chmod 0660 /dev/akm8975_aot
-    chmod 0660 /dev/akm8975_dev
     chown system system /dev/isl29028
     chmod 0660 /dev/isl29028
     chown system system /dev/adxl345
@@ -860,29 +621,6 @@ on boot
     chmod 0666 /dev/fts_fw_entry
 #TY wang_gj add for fts_touch end
 
-#TY wuxh add for bcmdhd.ko
-#  insmod /system/lib/modules/bcmdhd.ko
-
-
-#niuli add for sensor file thone end
-#TYDRV jinxr merge from android 2.2 for FM 20110-9-19 start 
-service btld /system/bin/logwrapper /system/bin/btld -lpm 1 -hb 3000000
-    class main
-    user root
-    group bluetooth net_bt_admin
-    disabled
-    oneshot
-
-# start btld if soft_onoff is enabled
-on property:service.brcm.bt.soft_onoff=1
-    start btld
-
-# stop btld if soft_onoff is disabled
-on property:service.brcm.bt.soft_onoff=0
-    stop btld
-
-#TYDRV jinxr merge from android 2.2 for FM 20110-9-19 end
-
 #TYDRV jinxr merge from android 2.2 for BT test 2011-9-19 start 
 service  hciattach_test /system/bin/brcm_patchram_plus \
  --enable_test --patchram /etc/firmware/brcm_bt.hcd  /dev/ttyHS0
@@ -894,31 +632,5 @@ service  hciattach_test /system/bin/brcm_patchram_plus \
 
 #TYDRV jinxr merge from android 2.2 for BT test 2011-9-19 end 
 
-#TIANYURD wangzhg 20120503 add for su2 cw begin
-chmod 755   /system/bin/cwpd
-chmod 0777 /system/bin/cwpd
-service  cwpd  /system/bin/cwpd
-user root
-group root
-disabled
 
-on property:persist.sys.ty.cw.run=start
-    start cwpd
-#TIANYURD wangzhg 20120503 add for su2 cw end
-
-
-# ty_bt2243_fmt
-#niuli add for bt2243 on 20120806
-service bttest_enable /system/bin/bttest_enable
-    class main
-    user root
-    group root
-    disabled
-    oneshot
-service bttest_disable /system/bin/bttest_disable
-    class main
-    user root
-    group root
-    disabled
-    oneshot
 
