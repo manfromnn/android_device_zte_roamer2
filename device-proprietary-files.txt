@@ -75,10 +75,10 @@ bin/ATFWD-daemon
 bin/qmuxd
 bin/radish
 bin/rild
-etc/permissions/qcnvitems.xml
-etc/permissions/qcrilhook.xml
-framework/qcnvitems.jar
-framework/qcrilhook.jar
+-etc/permissions/qcnvitems.xml
+-etc/permissions/qcrilhook.xml
+-framework/qcnvitems.jar
+-framework/qcrilhook.jar
 bin/rmt_storage
 lib/libauth.so
 lib/libaudioeq.so
