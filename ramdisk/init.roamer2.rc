@@ -629,6 +629,10 @@ service  hciattach_test /system/bin/brcm_patchram_plus \
     group root
     disabled
     oneshot
+    
+    service dmesg /system/bin/sh /system/etc/init.dmesg.sh
+    class main
+    oneshot
 
 #TYDRV jinxr merge from android 2.2 for BT test 2011-9-19 end 
 
